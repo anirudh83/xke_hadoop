@@ -1,4 +1,4 @@
-package com.example;
+package com.example.wordcount;
 
 import java.io.IOException;
 import java.util.StringTokenizer;

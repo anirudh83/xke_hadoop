@@ -1,14 +1,16 @@
-package com.example;
+package com.example.trendfinder;
 
 import java.io.IOException;
 import java.util.StringTokenizer;
 
-import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 
-public class WordCountMapper2 extends Mapper<LongWritable, Text, Text, Text>{
+/**
+ * @author anirudh
+ */
+public class TrendMapper2 extends Mapper<LongWritable, Text, LongWritable, Text>{
 	
 
     @Override
@@ -22,7 +24,7 @@ public class WordCountMapper2 extends Mapper<LongWritable, Text, Text, Text>{
         
         // Context here is like a multi set which allocates value "one" for key "word".
         	
-        	context.write(new Text(tokenizer.nextToken()), new Text(token));      	
+        	context.write(new LongWritable(Long.parseLong(tokenizer.nextToken().toString())), new Text(token));      	
         	
         }
     }

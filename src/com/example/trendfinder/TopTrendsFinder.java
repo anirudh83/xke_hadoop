@@ -1,9 +1,10 @@
-package com.example;
+package com.example.trendfinder;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
@@ -13,24 +14,28 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
-public class WordCount extends Configured implements Tool {
+/**
+ * @author anirudh
+ */
+public class TopTrendsFinder extends Configured implements Tool {
 	
-	private static final String inputPath = "/home/anirudh/agilencr/input/test.jpda";
+	private static final String inputPath = "/home/anirudh/agilencr/xke_hadoop/input/test.jpda";
 	private static final String outputPath ="/home/anirudh/agilencr/output";
 	private static final String tempPath = "/home/anirudh/agilencr/temp";
+	
     @Override
     public int run(String[] args) throws Exception {
         Configuration conf = getConf();
         
         Job job1 = new Job(conf);
-        job1.setJarByClass(WordCount.class);       
+        job1.setJarByClass(TopTrendsFinder.class);       
         
         job1.setOutputKeyClass(Text.class);
         job1.setOutputValueClass(IntWritable.class);
         
-        job1.setMapperClass(WordCountMapper.class);
-        job1.setCombinerClass(WordCountReducer.class);
-        job1.setReducerClass(WordCountReducer.class);
+        job1.setMapperClass(TrendMapper1.class);
+        job1.setCombinerClass(TrendReducer1.class);
+        job1.setReducerClass(TrendReducer1.class);
         
         job1.setInputFormatClass(TextInputFormat.class);
         job1.setOutputFormatClass(TextOutputFormat.class);
@@ -47,24 +52,24 @@ public class WordCount extends Configured implements Tool {
         
         //---------------------------------------------
         
-        /*Job job2 = new Job(conf, "top-k-pass-2");
+        Job job2 = new Job(conf, "top-k-pass-2");
         FileInputFormat.setInputPaths(job2, new Path(tempPath));
         FileOutputFormat.setOutputPath(job2, new Path(outputPath));
        
-        job2.setMapperClass(WordCountMapper2.class);
-        job2.setReducerClass(WordCountReducer2.class);
+        job2.setMapperClass(TrendMapper2.class);
+        job2.setReducerClass(TrendReducer2.class);
         
         job2.setInputFormatClass(TextInputFormat.class);
-        job2.setMapOutputKeyClass(Text.class);
+        job2.setMapOutputKeyClass(LongWritable.class);
         job2.setMapOutputValueClass(Text.class);
-        //job2.setSortComparatorClass(ReverseComparator.class);
+        job2.setSortComparatorClass(LongWritable.DecreasingComparator.class);
         job2.setOutputFormatClass(TextOutputFormat.class);
        // job2.setNumReduceTasks(1);
         succ = job2.waitForCompletion(true);
         if (! succ) {
           System.out.println("Job2 failed, exiting");
           return -1;
-        }*/
+        }
         
         return 0;
         
@@ -76,7 +81,7 @@ public class WordCount extends Configured implements Tool {
     	path[1] = outputPath;
     	path[2] = tempPath;
     	
-        int res = ToolRunner.run(new WordCount(), path);
+        int res = ToolRunner.run(new TopTrendsFinder(), path);
         System.exit(res);
     }
 }
